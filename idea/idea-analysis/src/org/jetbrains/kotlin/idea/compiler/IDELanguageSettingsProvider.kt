@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.compiler
 
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
@@ -25,12 +24,9 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.cli.common.arguments.Jsr305Parser
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.idea.caches.project.*
@@ -43,27 +39,12 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
         when (moduleInfo) {
             is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
-            is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
+            is LibraryInfo -> project.getLanguageVersionSettings()
             is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             is ScriptDependenciesInfo.ForFile -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             is PlatformModuleInfo -> moduleInfo.platformModule.module.languageVersionSettings
             else -> project.getLanguageVersionSettings()
         }
-
-    private fun getExtraAnalysisFlags(project: Project): Map<AnalysisFlag<*>, Any?> {
-        val map = mutableMapOf<AnalysisFlag<*>, Any>()
-        for (module in ModuleManager.getInstance(project).modules) {
-            val settings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module) ?: continue
-            val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
-
-            val jsr305State = Jsr305Parser(MessageCollector.NONE).parse(
-                compilerArguments.jsr305,
-                compilerArguments.supportCompatqualCheckerFrameworkAnnotations
-            )
-            map.put(AnalysisFlag.jsr305, jsr305State)
-        }
-        return map
-    }
 
     override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion {
         return (moduleInfo as? ModuleSourceInfo)?.module?.targetPlatform?.version ?: TargetPlatformVersion.NoVersion
