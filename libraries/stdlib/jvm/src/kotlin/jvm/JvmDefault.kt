@@ -11,7 +11,7 @@ import kotlin.internal.RequireKotlinVersionKind
 /**
  * Specifies that a JVM default method should be generated for non-abstract Kotlin interface member.
  *
- * This annotation requires explicit compilation flag to be enabled: `-Xenable-jvm-default`.
+ * This annotation requires explicit compilation option to be specified: `-Xjvm-default={enable|compatibility}`.
  * Also this requires jvmTarget 1.8 or higher.
  * Adding or removing this annotation to an interface member is a binary incompatible change.
  * @JvmDefault methods are excluded from interface delegation.
