@@ -501,6 +501,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return overriddenProperties != null ? overriddenProperties : Collections.<PropertyDescriptor>emptyList();
     }
 
+    public boolean isCompileTimeInitializerComputed() {
+        return compileTimeInitializer != null && compileTimeInitializer.isComputed();
+    }
+
     @NotNull
     @Override
     public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {

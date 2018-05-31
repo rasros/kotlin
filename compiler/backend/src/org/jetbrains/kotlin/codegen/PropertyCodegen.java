@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
@@ -483,6 +484,11 @@ public class PropertyCodegen {
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
+        if (!state.getClassBuilderMode().generateBodies &&
+                descriptor instanceof PropertyDescriptorImpl && !
+                    ((PropertyDescriptorImpl) descriptor).isCompileTimeInitializerComputed()) {
+            return false;
+        }
         //final field of primitive or String type
         if (!descriptor.isVar()) {
             Type type = typeMapper.mapType(descriptor);
