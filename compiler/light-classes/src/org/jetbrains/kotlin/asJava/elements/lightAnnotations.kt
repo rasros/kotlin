@@ -223,7 +223,7 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
         getClsNullabilityAnnotation(member) ?: KtLightNonExistentAnnotation(member)
 }) {
     private val deferredTypeInfo by lazyPub {
-        member.safeAs<KtLightMember<*>>()?.getDeferredTypeInfoIfExists()
+        member.safeAs<KtLightElement<*, *>>()?.getDeferredTypeInfoIfExists()
     }
 
     override fun fqNameMatches(fqName: String): Boolean {

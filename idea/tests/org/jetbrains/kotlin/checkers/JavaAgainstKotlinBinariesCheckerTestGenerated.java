@@ -139,6 +139,11 @@ public class JavaAgainstKotlinBinariesCheckerTestGenerated extends AbstractJavaA
         runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/KotlinAnnotations.kt");
     }
 
+    @TestMetadata("NullableDeferredFunReturnType.kt")
+    public void testNullableDeferredFunReturnType() throws Exception {
+        runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/NullableDeferredFunReturnType.kt");
+    }
+
     @TestMetadata("ReturnInnerClasses.kt")
     public void testReturnInnerClasses() throws Exception {
         runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ReturnInnerClasses.kt");
