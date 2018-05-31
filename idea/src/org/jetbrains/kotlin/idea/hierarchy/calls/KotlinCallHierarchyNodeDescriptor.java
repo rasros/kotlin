@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -181,8 +182,18 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
         String containerText = null;
         DeclarationDescriptor containerDescriptor = descriptor.getContainingDeclaration();
-        if (containerDescriptor instanceof ClassifierDescriptor) {
-            containerText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderClassifierName((ClassifierDescriptor) containerDescriptor);
+        while (containerDescriptor != null) {
+            if (containerDescriptor instanceof PackageFragmentDescriptor || containerDescriptor instanceof ModuleDescriptor) {
+                break;
+            }
+
+            Name name = containerDescriptor.getName();
+            if (!name.isSpecial()) {
+                String identifier = name.getIdentifier();
+                containerText = containerText != null ? identifier + "." + containerText : identifier;
+            }
+
+            containerDescriptor = containerDescriptor.getContainingDeclaration();
         }
 
         return containerText != null ? containerText + "." + elementText : elementText;
