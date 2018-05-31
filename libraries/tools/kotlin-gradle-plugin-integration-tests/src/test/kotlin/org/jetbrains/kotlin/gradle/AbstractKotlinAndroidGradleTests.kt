@@ -131,7 +131,7 @@ abstract class AbstractKotlinAndroidGradleTests(
 
         val modules = listOf("Android", "Lib")
         val flavors = listOf("Flavor1", "Flavor2")
-        val buildTypes = listOf("Debug", "Release")
+        val buildTypes = listOf("Debug")
 
         val tasks = arrayListOf<String>()
         for (module in modules) {
@@ -142,7 +142,7 @@ abstract class AbstractKotlinAndroidGradleTests(
             }
         }
 
-        project.build("build", "assembleAndroidTest") {
+        project.build("assembleDebug", "assembleAndroidTest") {
             assertSuccessful()
             // Before 3.0 AGP test only modules are compiled only against one flavor and one build type,
             // and contain only the compileDebugKotlin task.
@@ -159,14 +159,14 @@ abstract class AbstractKotlinAndroidGradleTests(
         }
 
         // Run the build second time, assert everything is up-to-date
-        project.build("build") {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertTasksUpToDate(tasks)
         }
 
         // Run the build third time, re-run tasks
 
-        project.build("build", "--rerun-tasks") {
+        project.build("assembleDebug", "--rerun-tasks") {
             assertSuccessful()
             assertTasksExecuted(tasks)
             checkKotlinGradleBuildServices()
