@@ -929,7 +929,7 @@ object Filtering : TemplateGroupBase() {
     val f_sliceArrayRange = fn("sliceArray(indices: IntRange)") {
         include(InvariantArraysOfObjects, ArraysOfPrimitives)
     } builder {
-        doc { "Returns a list containing elements at indices in the specified [indices] range." }
+        doc { "Returns an array containing elements of this array at specified [indices]." }
         returns("SELF")
         body(InvariantArraysOfObjects) {
             """
